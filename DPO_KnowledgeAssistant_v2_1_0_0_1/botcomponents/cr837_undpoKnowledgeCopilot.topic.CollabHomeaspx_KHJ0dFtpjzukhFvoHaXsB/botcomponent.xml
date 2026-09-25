@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr837_undpoKnowledgeCopilot.topic.CollabHomeaspx_KHJ0dFtpjzukhFvoHaXsB">
+  <componenttype>16</componenttype>
+  <description>This knowledge source provides information found in CollabHome.aspx SharePoint.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>CollabHome.aspx</name>
+  <parentbotid>
+    <schemaname>cr837_undpoKnowledgeCopilot</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

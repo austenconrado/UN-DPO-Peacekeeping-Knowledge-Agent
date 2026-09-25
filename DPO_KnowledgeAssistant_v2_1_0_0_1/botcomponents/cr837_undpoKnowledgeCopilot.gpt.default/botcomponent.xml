@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr837_undpoKnowledgeCopilot.gpt.default">
+  <componenttype>15</componenttype>
+  <description>Provides accurate, document-grounded responses on Protection of Civilians (POC) and related UNDPO policies using indexed SharePoint repositories within Microsoft 365.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>UNDPO Knowledge Copilot</name>
+  <parentbotid>
+    <schemaname>cr837_undpoKnowledgeCopilot</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

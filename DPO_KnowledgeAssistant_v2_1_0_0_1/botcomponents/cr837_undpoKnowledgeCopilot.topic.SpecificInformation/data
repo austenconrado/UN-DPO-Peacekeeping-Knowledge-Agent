@@ -1,0 +1,126 @@
+kind: AdaptiveDialog
+modelDescription: Provide specific information on a document
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: Question
+      id: question_ngKEbw
+      interruptionPolicy:
+        allowInterruption: true
+
+      variable: Topic.Var1
+      prompt: What question would you like to ask?
+      entity:
+        kind: StringPrebuiltEntity
+        sensitivityLevel: None
+
+    - kind: SearchAndSummarizeContent
+      id: iwFj9S
+      userInput: =Topic.Var1
+
+    - kind: Question
+      id: question_8cck7c
+      interruptionPolicy:
+        allowInterruption: true
+
+      variable: init:Topic.Var2
+      prompt: Would you like to dive futher or ask another question?
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: ClosedListEntity
+          items:
+            - id: Dive further
+              displayName: Dive further
+
+            - id: Ask another question
+              displayName: Ask another question
+
+    - kind: ConditionGroup
+      id: conditionGroup_mB6hUh
+      conditions:
+        - id: conditionItem_QFQFHW
+          condition: =Topic.Var2 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_8cck7c'.'Dive further'
+          actions:
+            - kind: Question
+              id: question_DHyzoW
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.Var3
+              prompt: What specifically would you like to explore futher?
+              entity: StringPrebuiltEntity
+
+            - kind: SearchAndSummarizeContent
+              id: r88z9v
+              userInput: =Topic.Var3
+
+            - kind: GotoAction
+              id: rtL0RS
+              actionId: question_8cck7c
+
+        - id: conditionItem_W2SX81
+          condition: =Topic.Var2 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_8cck7c'.'Ask another question'
+          actions:
+            - kind: Question
+              id: question_k3VCts
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.Var4
+              prompt: How can I help?
+              entity:
+                kind: EmbeddedEntity
+                definition:
+                  kind: ClosedListEntity
+                  items:
+                    - id: Provide a short summary of a specific Peacekeeping document?
+                      displayName: Provide a short summary of a specific Peacekeeping document?
+
+                    - id: Provide specific information or policy guidance from a file on record?
+                      displayName: Provide specific information or policy guidance from a file on record?
+
+                    - id: Provide a Peacekeeping file ready for download?
+                      displayName: Provide a Peacekeeping file ready for download?
+
+                    - id: No more help is needed
+                      displayName: No more help is needed
+
+            - kind: ConditionGroup
+              id: conditionGroup_6Zu7Rb
+              conditions:
+                - id: conditionItem_dE58Pl
+                  condition: =Topic.Var4 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_k3VCts'.'Provide a short summary of a specific Peacekeeping document?'
+                  actions:
+                    - kind: BeginDialog
+                      id: ZEveVk
+                      dialog: cr837_undpoKnowledgeCopilot.topic.SummaryFile
+
+                - id: conditionItem_nhCKKR
+                  condition: =Topic.Var4 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_k3VCts'.'Provide specific information or policy guidance from a file on record?'
+                  actions:
+                    - kind: GotoAction
+                      id: ihIInZ
+                      actionId: question_ngKEbw
+
+                - id: conditionItem_EP3ue0
+                  condition: =Topic.Var4 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_k3VCts'.'Provide a Peacekeeping file ready for download?'
+                  actions:
+                    - kind: BeginDialog
+                      id: 2kRLTf
+                      dialog: cr837_undpoKnowledgeCopilot.topic.PDFDownload
+
+                - id: conditionItem_qcHobx
+                  condition: =Topic.Var4 = 'cr837_undpoKnowledgeCopilot.topic.SpecificInformation.main.question_k3VCts'.'No more help is needed'
+                  actions:
+                    - kind: SendActivity
+                      id: sendActivity_ZAHRah
+                      activity: Thank you, please restart the conversation if you would like to continue!
+
+                    - kind: EndConversation
+                      id: Mub1ux
+
+inputType: {}
+outputType: {}

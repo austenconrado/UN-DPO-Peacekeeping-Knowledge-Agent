@@ -1,0 +1,95 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnConversationStart
+  id: main
+  actions:
+    - kind: Question
+      id: question_3fstXQ
+      interruptionPolicy:
+        allowInterruption: true
+        interruptionTopicListFilter:
+          kind: IncludeSelectedTopics
+          allowedInterruptTopics:
+            - cr837_undpoKnowledgeCopilot.topic.Escalate
+
+      variable: Topic.Var1
+      prompt: Hi, I am your UNDPO Knowledge Copilot Agent Assistant. How can I help today?
+      validation: =!IsBlank(Topic.Var1)
+      entity:
+        kind: EmbeddedEntity
+        sensitivityLevel: None
+        definition:
+          kind: ClosedListEntity
+          items:
+            - id: Provide a short summary of a specific Peacekeeping document?
+              displayName: Provide a short summary of a specific Peacekeeping document?
+
+            - id: Provide specific information or policy guidance from a file on record?
+              displayName: Provide specific information or policy guidance from a file on record?
+
+            - id: Provide a Peacekeeping file ready for download?
+              displayName: Provide a Peacekeeping file ready for download?
+
+            - id: Exit
+              displayName: Exit
+
+    - kind: ConditionGroup
+      id: conditionGroup_6OiFw3
+      conditions:
+        - id: conditionItem_NQ5zUO
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.ConversationStart.main.question_3fstXQ'.'Provide a Peacekeeping file ready for download?'
+          actions:
+            - kind: Question
+              id: question_WHvCNH
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.VarSearch
+              prompt: Please provide specific information or policy guidance from a file on record.
+              entity: StringPrebuiltEntity
+
+            - kind: BeginDialog
+              id: WUJi6n
+              dialog: cr837_undpoKnowledgeCopilot.topic.PDFDownload
+
+        - id: conditionItem_Vp2mrx
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.ConversationStart.main.question_3fstXQ'.'Provide specific information or policy guidance from a file on record?'
+          actions:
+            - kind: BeginDialog
+              id: HGI1Y7
+              dialog: cr837_undpoKnowledgeCopilot.topic.SpecificInformation
+
+        - id: conditionItem_vAp7L7
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.ConversationStart.main.question_3fstXQ'.'Provide a short summary of a specific Peacekeeping document?'
+          actions:
+            - kind: BeginDialog
+              id: mBakqH
+              dialog: cr837_undpoKnowledgeCopilot.topic.SummaryFile
+
+        - id: conditionItem_sfVvkJ
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.ConversationStart.main.question_3fstXQ'.Exit
+          actions:
+            - kind: SendActivity
+              id: sendActivity_jO7RGY
+              activity: Thank you, please restart the conversation if you would like to continue!
+
+            - kind: BeginDialog
+              id: 58FpK8
+              dialog: cr837_undpoKnowledgeCopilot.topic.EndofConversation
+
+inputType:
+  properties:
+    Var1:
+      displayName: Var1
+      type:
+        kind: EmbeddedOptionSet
+        sensitivityLevel: None
+        dialogSchemaName: cr837_undpoKnowledgeCopilot.topic.ConversationStart
+        triggerId: main
+        actionId: question_3fstXQ
+
+    VarSearch:
+      displayName: VarSearch
+      type: String
+
+outputType: {}

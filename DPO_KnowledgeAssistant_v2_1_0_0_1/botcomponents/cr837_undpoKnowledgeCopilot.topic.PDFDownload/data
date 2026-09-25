@@ -1,0 +1,247 @@
+kind: AdaptiveDialog
+modelDescription: The agent will search through the backend data to pull a specific document seeking to download. Also it will provide a brief description of the document.
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent: {}
+  actions:
+    - kind: SetVariable
+      id: setVariable_ve0tcG
+      variable: Topic.searchQuery
+      value: Topic.VarSearch
+
+    - kind: SendActivity
+      id: sendActivity_vZBAQ8
+      activity: "Searching for document: {Topic.searchQuery}"
+
+    - kind: CreateSearchQuery
+      id: createSearchQuery_iYy11P
+      userInput: =Topic.searchQuery
+      result: Topic.generatedSearchQuery
+
+    - kind: SearchKnowledgeSources
+      id: searchKnowledgeSources_FUMinx
+      fileSearchDataSource:
+        searchFilesMode:
+          kind: DoNotSearchFiles
+
+      knowledgeSources:
+        kind: SearchSpecificKnowledgeSources
+        knowledgeSources:
+          - cr837_undpoKnowledgeCopilot.topic.cleaned_dataset_lFEPGGxr9QnOMzpibNDqZ
+          - cr837_undpoKnowledgeCopilot.topic.CollabHomeaspx_KHJ0dFtpjzukhFvoHaXsB
+
+      result: Topic.searchResults
+      userInput: =Topic.generatedSearchQuery.SearchQuery
+
+    - kind: ConditionGroup
+      id: conditionGroup_6LfcTa
+      conditions:
+        - id: conditionItem_vV1BjG
+          condition: =CountRows(Topic.searchResults) > 0
+          actions:
+            - kind: SendActivity
+              id: sendActivity_JAjdjR
+              activity: |-
+                I found the following documents based on your criteria:
+
+                Dataset: {First(Topic.searchResults).KnowledgeName}
+
+                File Name: {Left(First(Topic.searchResults).Content, 300)}
+                ...
+
+                Download PDF: {First(Topic.searchResults).ContentLocation}
+
+            - kind: Question
+              id: question_kuBtYG
+              interruptionPolicy:
+                allowInterruption: true
+
+              variable: init:Topic.Var3
+              prompt: Would you like to dive further into the document or ask another question?
+              entity:
+                kind: EmbeddedEntity
+                definition:
+                  kind: ClosedListEntity
+                  items:
+                    - id: Ask another question
+                      displayName: Ask another question
+
+                    - id: Dive deeper
+                      displayName: Dive deeper
+
+                displayName: EmbeddedEntity-iDQEzk
+
+            - kind: ConditionGroup
+              id: conditionGroup_z1kXZI
+              conditions:
+                - id: conditionItem_sFHSWk
+                  condition: =Topic.Var3 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_kuBtYG'.'Ask another question'
+                  actions:
+                    - kind: GotoAction
+                      id: F1pFXs
+                      actionId: question_p0guDf
+
+                - id: conditionItem_WngK2D
+                  condition: =Topic.Var3 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_kuBtYG'.'Dive deeper'
+                  actions:
+                    - kind: Question
+                      id: question_4qtNMb
+                      interruptionPolicy:
+                        allowInterruption: true
+
+                      variable: Topic.TopicDeepDiveQuery
+                      prompt: What specifically would you like to explore further?
+                      entity:
+                        kind: StringPrebuiltEntity
+                        sensitivityLevel: None
+
+                    - kind: SetVariable
+                      id: setVariable_TDdL9k
+                      variable: Topic.TopicfinalQuery
+                      value: =Topic.searchQuery & " " & Topic.TopicDeepDiveQuery
+
+                    - kind: SearchAndSummarizeContent
+                      id: IRx9by
+                      userInput: =Topic.TopicfinalQuery
+                      additionalInstructions: Provide a detailed explanation and expand on the user's request
+                      fileSearchDataSource:
+                        searchFilesMode:
+                          kind: SearchAllFiles
+
+                      knowledgeSources:
+                        kind: SearchAllKnowledgeSources
+
+                    - kind: GotoAction
+                      id: gNRUWo
+                      actionId: question_kuBtYG
+
+      elseActions:
+        - kind: SendActivity
+          id: sendActivity_5WkK8W
+          activity: I couldn't find any matching PDF documents in the indexed knowledge source. Please list something else.
+
+        - kind: Question
+          id: question_EUWNJt
+          interruptionPolicy:
+            allowInterruption: true
+
+          variable: init:Topic.Var2
+          prompt: Would you like to ask another question?
+          entity:
+            kind: EmbeddedEntity
+            definition:
+              kind: ClosedListEntity
+              items:
+                - id: yes
+                  displayName: yes
+
+                - id: no
+                  displayName: no
+
+        - kind: GotoAction
+          id: gr2xI4
+          actionId: question_p0guDf
+
+    - kind: Question
+      id: question_p0guDf
+      interruptionPolicy:
+        allowInterruption: true
+
+      variable: init:Topic.Var1
+      prompt: How can I help?
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: ClosedListEntity
+          items:
+            - id: Provide a short summary of a specific Peacekeeping document?
+              displayName: Provide a short summary of a specific Peacekeeping document?
+
+            - id: Provide specific information or policy guidance from a file on record?
+              displayName: Provide specific information or policy guidance from a file on record?
+
+            - id: Provide a Peacekeeping file ready for download?
+              displayName: Provide a Peacekeeping file ready for download?
+
+            - id: No more help is needed
+              displayName: No more help is needed
+
+    - kind: ConditionGroup
+      id: conditionGroup_7u7FBu
+      conditions:
+        - id: conditionItem_qFdVcL
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_p0guDf'.'Provide a short summary of a specific Peacekeeping document?'
+          actions:
+            - kind: BeginDialog
+              id: JjACuh
+              dialog: cr837_undpoKnowledgeCopilot.topic.SummaryFile
+
+        - id: conditionItem_hbvevC
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_p0guDf'.'Provide specific information or policy guidance from a file on record?'
+          actions:
+            - kind: BeginDialog
+              id: TYNQof
+              dialog: cr837_undpoKnowledgeCopilot.topic.SpecificInformation
+
+        - id: conditionItem_3gWZ55
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_p0guDf'.'Provide a Peacekeeping file ready for download?'
+          actions:
+            - kind: GotoAction
+              id: n1cxuL
+              actionId: setVariable_ve0tcG
+
+        - id: conditionItem_RjuNbl
+          condition: =Topic.Var1 = 'cr837_undpoKnowledgeCopilot.topic.PDFDownload.main.question_p0guDf'.'No more help is needed'
+          actions:
+            - kind: SendActivity
+              id: sendActivity_gpFJLv
+              activity: Thank you, please restart the conversation if you would like to continue!
+
+            - kind: EndConversation
+              id: T9O34w
+
+      elseActions:
+        - kind: EndConversation
+          id: TjQdmi
+
+inputType:
+  properties:
+    generatedSearchQuery:
+      displayName: generatedSearchQuery
+      type:
+        kind: Record
+        properties:
+          KeywordSearchQuery: String
+          SearchQuery: String
+
+    searchQuery:
+      displayName: searchQuery
+      type: String
+
+    searchResults:
+      displayName: searchResults
+      type:
+        kind: Table
+        properties:
+          Content:
+            isRequired: true
+            type: String
+
+          ContentLocation:
+            isRequired: true
+            type: String
+
+          KnowledgeName:
+            isRequired: true
+            type: String
+
+          KnowledgeType:
+            isRequired: true
+            type: String
+
+          Title:
+            isRequired: true
+            type: String
+
+outputType: {}

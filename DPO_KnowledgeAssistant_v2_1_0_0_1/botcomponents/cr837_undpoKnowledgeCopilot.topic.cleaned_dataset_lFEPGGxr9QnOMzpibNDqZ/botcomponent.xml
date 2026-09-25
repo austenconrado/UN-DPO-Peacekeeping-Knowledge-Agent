@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr837_undpoKnowledgeCopilot.topic.cleaned_dataset_lFEPGGxr9QnOMzpibNDqZ">
+  <componenttype>16</componenttype>
+  <description>This knowledge source provides information found in cleaned_dataset SharePoint.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>cleaned_dataset</name>
+  <parentbotid>
+    <schemaname>cr837_undpoKnowledgeCopilot</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

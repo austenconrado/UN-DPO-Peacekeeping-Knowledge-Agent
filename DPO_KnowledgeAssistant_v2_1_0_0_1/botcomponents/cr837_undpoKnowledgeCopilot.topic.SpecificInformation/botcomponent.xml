@@ -1,0 +1,10 @@
+<botcomponent schemaname="cr837_undpoKnowledgeCopilot.topic.SpecificInformation">
+  <componenttype>9</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <name>Specific Information</name>
+  <parentbotid>
+    <schemaname>cr837_undpoKnowledgeCopilot</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

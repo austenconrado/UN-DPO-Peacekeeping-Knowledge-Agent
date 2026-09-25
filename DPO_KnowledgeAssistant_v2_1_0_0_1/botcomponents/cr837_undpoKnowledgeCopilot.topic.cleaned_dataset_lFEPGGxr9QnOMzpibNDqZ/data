@@ -1,0 +1,4 @@
+kind: KnowledgeSourceConfiguration
+source:
+  kind: SharePointSearchSource
+  site: https://fordhamit.sharepoint.com/sites/DPOKnowledgeAssistant-AgenticAI/Shared%20Documents/cleaned_dataset
